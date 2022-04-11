@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+	<title>珠峰培训 - 微信：18310612838</title>
+	<!-- IMPORT CSS -->
+</head>
+
+<body>
+	<!-- IMPORT JS -->
+	<script src="myPromise.js"></script>
+	<script>
+	/*	new MyPromise((resolve, reject) => {
+			setTimeout(_ => {
+				resolve(100);
+				// reject('ERROR');
+			}, 1000);
+		}).catch(reason => {
+			return Promise.reject(reason);
+		}).then(result => {
+			return result;
+		}).then(result => {
+
+		});*/
+
+		// MyPromise.all([...]).then();
+
+
+
+		new MyPromise((resolve, reject) => {
+			setTimeout(_ => {
+				resolve(100);
+				// reject('ERROR');
+			}, 1000);
+		}).then(result => {
+			return result;
+		}).then(result => {
+
+		});
+	</script>
+</body>
+
+</html>

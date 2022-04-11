@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+	<title>珠峰培训 - 微信：18310612838</title>
+	<!-- IMPORT CSS -->
+</head>
+
+<body>
+	<!-- IMPORT JS -->
+	<script>
+		/*
+		 * encodeURI / decodeURI：只能把空格和中文内容进行编码和解码，所以一般应用这种模式处理整个URL的编码 
+		 * encodeURIComponent / decodeURIComponent：汇报所有的特殊字符和汉字都进行编码，一般不会整个URL编码，只会给传递的每一个参数值单独编码
+		 * 
+		 * =>客户端和服务器端都支持这两种编码和解码方式（客户端和服务器端信息编码一般都是基于这种方式）
+		 */
+		/* let str =
+			`http://www.zhufengpeixun.cn?lx=0&url=${encodeURIComponent('http://www.baidu.com/?aa=12')}&name=${encodeURIComponent('珠峰培训')}`;
+		console.log(str);
+
+		// http://www.zhufengpeixun.cn?lx=0&url=http%3A%2F%2Fwww.baidu.com%2F%3Faa%3D12&name=%E7%8F%A0%E5%B3%B0%E5%9F%B9%E8%AE%AD
+
+		console.log(decodeURIComponent('http%3A%2F%2Fwww.baidu.com%2F%3Faa%3D12')); */
+
+
+		/* 
+		 * escape / unescape：这种方式不一定所有的后台都有，所以一般只应用于客户端自己内部编码，例如：存储cookie信息，把存储的中文进行编码和解码；特殊符号也会被编码；
+		 */
+		console.log(escape('珠峰培训'));
+		console.log(unescape('%u73E0%u5CF0%u57F9%u8BAD'));
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+	<title>珠峰培训 - 微信：18310612838</title>
+	<!-- IMPORT CSS -->
+</head>
+
+<body>
+	<!-- IMPORT JS -->
+	<script>
+		// 栈是一种数据结构，表达的是数据的一种存取方式； 先进后出  后进先出 比如数组的push pop
+		//堆数据结构是一种树状结构
+
+		/*
+		 * 基本数据类型（值类型）
+		 *    number  string  boolean  null  undefined
+		 * 引用数据类型
+		 *    object：{}  []  /^$/  日期对象  Math  实例对象...  
+		 *    function
+		 *  ES6中新增
+		 *    Symbol 唯一值
+		 */
+		// => typeof 检测数据类型
+		// console.log(typeof NaN); //=>"number"  不是一个有效数字，但是属于number数字类型
+		// => NaN==NaN也是不相等，它和谁都不相等，所以检测是否为有效数字需要用isNaN
+
+		// => object
+		// 对象的属性名一定不能是引用类型值,默认会把引用类型值转换为字符串进行处理
+		/* let a = {
+			x: 100
+		};
+		let b = function fn() {
+			let a = 100;
+		}
+		let obj = {
+			0: 100,
+			true: '珠峰'
+		};
+		obj[a] = 1000;
+		obj[b] = 2000; */
+
+		/* let a = {
+			x: 100
+		};
+		let b = {
+			y: 200
+		};
+		let obj = {};
+		obj[a] = '珠峰';
+		//=>obj["[object Object]"]="珠峰";
+		obj[b] = "培训";
+		//=>obj["[object Object]"]="培训";
+		console.log(obj[a] === obj[b]);  //=>TRUE */
+
+		// => 数组是特殊的对象
+		// console.log([12, 23, 34]);
+	</script>
+
+	<script>
+		/* //example 1
+		let a = {},
+			b = '0',
+			c = 0;
+		a[b] = '珠峰';
+		a[c] = '培训';
+		console.log(a[b]);​
+
+		//example 2
+		let a = {},
+			b = Symbol('1'), //=>唯一值
+			c = Symbol('1');
+		a[b] = '珠峰';
+		a[c] = '培训';
+		console.log(a[b]);​
+
+		//example 3
+		let a = {},
+			b = {
+				n: '1'
+			},
+			c = {
+				m: '2'
+			};
+		a[b] = '珠峰';
+		a[c] = '培训';
+		console.log(a[b]); */
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html><html><head><title>Web前端开发高级工程师（9）</title><meta charset='utf-8'><link href='https://cdn.maxiang.io/res-min/themes/marxico.css' rel='stylesheet'><style>
+.note-content  {font-family: 'Helvetica Neue', Arial, 'Hiragino Sans GB', STHeiti, 'Microsoft YaHei', 'WenQuanYi Micro Hei', SimSun, Song, sans-serif;}
+
+</style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+
+
+<h3 id="web前端开发高级工程师9">Web前端开发高级工程师（9）</h3>
+
+
+
+<h4 id="1-拖拽">1. 拖拽</h4>
+
+<h4 id="2-模态框插件封装">2. 模态框插件封装</h4>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-comment">/*</span>
+</div><div class="hljs-line"><span class="hljs-comment"> * DIALOG：模态框组件 </span>
+</div><div class="hljs-line"><span class="hljs-comment"> */</span>
+</div><div class="hljs-line"><span class="hljs-built_in">window</span>.alert = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+</div><div class="hljs-line">    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Dialog</span> </span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">constructor</span>(content, options) {
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.content = content;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.options = options;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.timer = <span class="hljs-literal">null</span>;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$DIALOG = <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$MAIN = <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$HEADER = <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$TITLE = <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$CLOSE = <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$BODY = <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$FOOTER = <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$CONFIRM = <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$CANCEL = <span class="hljs-literal">null</span>;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-comment">//=&gt;START</span>
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.init();
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        createDIV(cssText = <span class="hljs-string">''</span>, type = <span class="hljs-string">'div'</span>) {
+</div><div class="hljs-line">            <span class="hljs-keyword">let</span> div = <span class="hljs-built_in">document</span>.createElement(type);
+</div><div class="hljs-line">            div.style.cssText = cssText;
+</div><div class="hljs-line">            <span class="hljs-keyword">return</span> div;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        create() {
+</div><div class="hljs-line">            <span class="hljs-keyword">let</span> {
+</div><div class="hljs-line">                title,
+</div><div class="hljs-line">                confirm,
+</div><div class="hljs-line">                handled
+</div><div class="hljs-line">            } = <span class="hljs-keyword">this</span>.options,
+</div><div class="hljs-line">                content = <span class="hljs-keyword">this</span>.content;
+</div><div class="hljs-line">            <span class="hljs-comment">//=&gt;创建元素</span>
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$DIALOG = <span class="hljs-keyword">this</span>.createDIV(<span class="hljs-string">`</span>
+</div><div class="hljs-line"><span class="hljs-string">                display:'none';</span>
+</div><div class="hljs-line"><span class="hljs-string">                position: fixed;</span>
+</div><div class="hljs-line"><span class="hljs-string">                top: 0;</span>
+</div><div class="hljs-line"><span class="hljs-string">                left: 0;</span>
+</div><div class="hljs-line"><span class="hljs-string">                z-index: 9998;</span>
+</div><div class="hljs-line"><span class="hljs-string">                width: 100%;</span>
+</div><div class="hljs-line"><span class="hljs-string">                height: 100%;</span>
+</div><div class="hljs-line"><span class="hljs-string">                background: rgba(0, 0, 0, .8);</span>
+</div><div class="hljs-line"><span class="hljs-string">                user-select: none;</span>
+</div><div class="hljs-line"><span class="hljs-string">                opacity: 0;</span>
+</div><div class="hljs-line"><span class="hljs-string">                transition: opacity .3s;</span>
+</div><div class="hljs-line"><span class="hljs-string">            `</span>);
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$MAIN = <span class="hljs-keyword">this</span>.createDIV(<span class="hljs-string">`</span>
+</div><div class="hljs-line"><span class="hljs-string">                position: absolute;</span>
+</div><div class="hljs-line"><span class="hljs-string">                top: 100px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                left: 50%;</span>
+</div><div class="hljs-line"><span class="hljs-string">                margin-left: -200px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                z-index: 9999;</span>
+</div><div class="hljs-line"><span class="hljs-string">                width: 400px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                background: #FFF;</span>
+</div><div class="hljs-line"><span class="hljs-string">                border-radius: 3px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                overflow: hidden;</span>
+</div><div class="hljs-line"><span class="hljs-string">                transform: translateY(-1000px);</span>
+</div><div class="hljs-line"><span class="hljs-string">                transition: transform .3s;</span>
+</div><div class="hljs-line"><span class="hljs-string">            `</span>);
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$HEADER = <span class="hljs-keyword">this</span>.createDIV(<span class="hljs-string">`</span>
+</div><div class="hljs-line"><span class="hljs-string">                position: relative;</span>
+</div><div class="hljs-line"><span class="hljs-string">                box-sizing: border-box;</span>
+</div><div class="hljs-line"><span class="hljs-string">                padding: 0 10px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                height: 40px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                line-height: 40px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                background: #2299EE;</span>
+</div><div class="hljs-line"><span class="hljs-string">            `</span>);
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$TITLE = <span class="hljs-keyword">this</span>.createDIV(<span class="hljs-string">`</span>
+</div><div class="hljs-line"><span class="hljs-string">                font-size: 18px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                color: #FFF;</span>
+</div><div class="hljs-line"><span class="hljs-string">                font-weight: normal;</span>
+</div><div class="hljs-line"><span class="hljs-string">            `</span>, <span class="hljs-string">'h3'</span>);
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$CLOSE = <span class="hljs-keyword">this</span>.createDIV(<span class="hljs-string">`</span>
+</div><div class="hljs-line"><span class="hljs-string">                position: absolute;</span>
+</div><div class="hljs-line"><span class="hljs-string">                right: 10px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                top: 50%;</span>
+</div><div class="hljs-line"><span class="hljs-string">                transform: translateY(-50%);</span>
+</div><div class="hljs-line"><span class="hljs-string">                font-size: 24px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                font-style: normal;</span>
+</div><div class="hljs-line"><span class="hljs-string">                color: #FFF;</span>
+</div><div class="hljs-line"><span class="hljs-string">                font-family: 'Courier New';</span>
+</div><div class="hljs-line"><span class="hljs-string">                cursor: pointer;</span>
+</div><div class="hljs-line"><span class="hljs-string">            `</span>, <span class="hljs-string">'i'</span>);
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$BODY = <span class="hljs-keyword">this</span>.createDIV(<span class="hljs-string">`</span>
+</div><div class="hljs-line"><span class="hljs-string">                padding: 30px 10px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                line-height: 30px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                font-size: 16px;</span>
+</div><div class="hljs-line"><span class="hljs-string">            `</span>);
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$FOOTER = <span class="hljs-keyword">this</span>.createDIV(<span class="hljs-string">`</span>
+</div><div class="hljs-line"><span class="hljs-string">                text-align: right;</span>
+</div><div class="hljs-line"><span class="hljs-string">                padding: 10px 10px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                border-top: 1px solid #EEE;</span>
+</div><div class="hljs-line"><span class="hljs-string">            `</span>);
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$CONFIRM = <span class="hljs-keyword">this</span>.createDIV(<span class="hljs-string">`</span>
+</div><div class="hljs-line"><span class="hljs-string">                margin: 0 5px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                padding: 0 15px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                height: 28px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                line-height: 28px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                border: none;</span>
+</div><div class="hljs-line"><span class="hljs-string">                font-size: 14px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                cursor: pointer;</span>
+</div><div class="hljs-line"><span class="hljs-string">                color: #FFF;</span>
+</div><div class="hljs-line"><span class="hljs-string">                background: #2299EE;</span>
+</div><div class="hljs-line"><span class="hljs-string">            `</span>, <span class="hljs-string">'button'</span>);
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$CANCEL = <span class="hljs-keyword">this</span>.createDIV(<span class="hljs-string">`</span>
+</div><div class="hljs-line"><span class="hljs-string">                margin: 0 5px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                padding: 0 15px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                height: 28px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                line-height: 28px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                border: none;</span>
+</div><div class="hljs-line"><span class="hljs-string">                font-size: 14px;</span>
+</div><div class="hljs-line"><span class="hljs-string">                cursor: pointer;</span>
+</div><div class="hljs-line"><span class="hljs-string">                color: #000;</span>
+</div><div class="hljs-line"><span class="hljs-string">                background: #DDD;</span>
+</div><div class="hljs-line"><span class="hljs-string">            `</span>, <span class="hljs-string">'button'</span>);
+</div><div class="hljs-line">            <span class="hljs-comment">//=&gt;插入到页面中</span>
+</div><div class="hljs-line">            <span class="hljs-comment">// HEADER</span>
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$TITLE.innerHTML = title;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$CLOSE.innerHTML = <span class="hljs-string">'X'</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$HEADER.appendChild(<span class="hljs-keyword">this</span>.$TITLE);
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$HEADER.appendChild(<span class="hljs-keyword">this</span>.$CLOSE);
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$MAIN.appendChild(<span class="hljs-keyword">this</span>.$HEADER);
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-comment">// BODY</span>
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$BODY.innerHTML = content;
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$MAIN.appendChild(<span class="hljs-keyword">this</span>.$BODY);
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-comment">// FOOTER</span>
+</div><div class="hljs-line">            <span class="hljs-keyword">if</span> (confirm) {
+</div><div class="hljs-line">                <span class="hljs-keyword">this</span>.$CONFIRM.innerHTML = <span class="hljs-string">'确定'</span>;
+</div><div class="hljs-line">                <span class="hljs-keyword">this</span>.$CANCEL.innerHTML = <span class="hljs-string">'取消'</span>;
+</div><div class="hljs-line">                <span class="hljs-keyword">this</span>.$FOOTER.appendChild(<span class="hljs-keyword">this</span>.$CONFIRM);
+</div><div class="hljs-line">                <span class="hljs-keyword">this</span>.$FOOTER.appendChild(<span class="hljs-keyword">this</span>.$CANCEL);
+</div><div class="hljs-line">                <span class="hljs-keyword">this</span>.$MAIN.appendChild(<span class="hljs-keyword">this</span>.$FOOTER);
+</div><div class="hljs-line">            }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$DIALOG.appendChild(<span class="hljs-keyword">this</span>.$MAIN);
+</div><div class="hljs-line">            <span class="hljs-built_in">document</span>.body.appendChild(<span class="hljs-keyword">this</span>.$DIALOG);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        show() {
+</div><div class="hljs-line">            <span class="hljs-keyword">let</span> {
+</div><div class="hljs-line">                $DIALOG,
+</div><div class="hljs-line">                $MAIN
+</div><div class="hljs-line">            } = <span class="hljs-keyword">this</span>;
+</div><div class="hljs-line">            $DIALOG.style.display = <span class="hljs-string">'block'</span>;
+</div><div class="hljs-line">            $DIALOG.style.opacity = <span class="hljs-number">1</span>;
+</div><div class="hljs-line">            $MAIN.style.transform = <span class="hljs-string">'translateY(0)'</span>;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.options.confirm) {
+</div><div class="hljs-line">                <span class="hljs-keyword">let</span> handled = <span class="hljs-keyword">this</span>.options.handled;
+</div><div class="hljs-line">                <span class="hljs-keyword">this</span>.timer = setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+</div><div class="hljs-line">                    <span class="hljs-keyword">this</span>.hide();
+</div><div class="hljs-line">                    <span class="hljs-keyword">typeof</span> handled === <span class="hljs-string">'function'</span> ? handled.call(<span class="hljs-keyword">this</span>, <span class="hljs-string">'CLOSE'</span>) : <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">                    clearTimeout(<span class="hljs-keyword">this</span>.timer);
+</div><div class="hljs-line">                    <span class="hljs-keyword">this</span>.timer = <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">                }, <span class="hljs-number">3000</span>);
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        hide() {
+</div><div class="hljs-line">            clearTimeout(<span class="hljs-keyword">this</span>.timer);
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.timer = <span class="hljs-literal">null</span>;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.$DIALOG) <span class="hljs-keyword">return</span>;
+</div><div class="hljs-line">            <span class="hljs-keyword">let</span> {
+</div><div class="hljs-line">                $DIALOG,
+</div><div class="hljs-line">                $MAIN
+</div><div class="hljs-line">            } = <span class="hljs-keyword">this</span>;
+</div><div class="hljs-line">            $DIALOG.style.opacity = <span class="hljs-number">0</span>;
+</div><div class="hljs-line">            $MAIN.style.transform = <span class="hljs-string">'translateY(-1000px)'</span>;
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-comment">//=&gt;动画结束让其隐藏</span>
+</div><div class="hljs-line">            <span class="hljs-keyword">let</span> hidden = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+</div><div class="hljs-line">                $DIALOG.style.display = <span class="hljs-string">'none'</span>;
+</div><div class="hljs-line">                <span class="hljs-built_in">document</span>.body.removeChild($DIALOG);
+</div><div class="hljs-line">                $DIALOG.removeEventListener(<span class="hljs-string">'transitionend'</span>, hidden);
+</div><div class="hljs-line">            };
+</div><div class="hljs-line">            $DIALOG.addEventListener(<span class="hljs-string">'transitionend'</span>, hidden);
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        init() {
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.create();
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$DIALOG.offsetLeft; <span class="hljs-comment">//=&gt;取消分离读写：让上面的样式先渲染</span>
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.show();
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">            <span class="hljs-comment">//=&gt;事件处理</span>
+</div><div class="hljs-line">            <span class="hljs-keyword">let</span> {
+</div><div class="hljs-line">                $CLOSE,
+</div><div class="hljs-line">                $CONFIRM,
+</div><div class="hljs-line">                $CANCEL,
+</div><div class="hljs-line">                <span class="hljs-attr">options</span>: {
+</div><div class="hljs-line">                    confirm,
+</div><div class="hljs-line">                    handled
+</div><div class="hljs-line">                }
+</div><div class="hljs-line">            } = <span class="hljs-keyword">this</span>;
+</div><div class="hljs-line">            $CLOSE.onclick = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+</div><div class="hljs-line">                <span class="hljs-keyword">this</span>.hide();
+</div><div class="hljs-line">                <span class="hljs-keyword">typeof</span> handled === <span class="hljs-string">'function'</span> ? handled.call(<span class="hljs-keyword">this</span>, <span class="hljs-string">'CLOSE'</span>) : <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">            };
+</div><div class="hljs-line">            <span class="hljs-keyword">if</span> (confirm) {
+</div><div class="hljs-line">                $CONFIRM.onclick = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+</div><div class="hljs-line">                    <span class="hljs-keyword">this</span>.hide();
+</div><div class="hljs-line">                    <span class="hljs-keyword">typeof</span> handled === <span class="hljs-string">'function'</span> ? handled.call(<span class="hljs-keyword">this</span>, <span class="hljs-string">'CONFIRM'</span>) : <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">                };
+</div><div class="hljs-line">                $CANCEL.onclick = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+</div><div class="hljs-line">                    <span class="hljs-keyword">this</span>.hide();
+</div><div class="hljs-line">                    <span class="hljs-keyword">typeof</span> handled === <span class="hljs-string">'function'</span> ? handled.call(<span class="hljs-keyword">this</span>, <span class="hljs-string">'CANCEL'</span>) : <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">                };
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line"><wbr>
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">anonymous</span>(<span class="hljs-params">content = <span class="hljs-string">''</span>, options = {}</span>) </span>{
+</div><div class="hljs-line">        <span class="hljs-comment">//=&gt;参数初始化</span>
+</div><div class="hljs-line">        options = <span class="hljs-built_in">Object</span>.assign({
+</div><div class="hljs-line">            <span class="hljs-attr">title</span>: <span class="hljs-string">'系统温馨提示'</span>,
+</div><div class="hljs-line">            <span class="hljs-attr">confirm</span>: <span class="hljs-literal">false</span>,
+</div><div class="hljs-line">            <span class="hljs-attr">handled</span>: <span class="hljs-literal">null</span>
+</div><div class="hljs-line">        }, options);
+</div><div class="hljs-line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Dialog(content, options);
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">})();
+</div></code></pre>
+
+
+
+<h4 id="3发布订阅">3.发布订阅</h4>
+
+
+
+<pre class="prettyprint hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-keyword">let</span> _subscribe = (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+</div><div class="hljs-line">    <span class="hljs-comment">//=&gt;SUB:发布订阅类</span>
+</div><div class="hljs-line">    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Sub</span> </span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">constructor</span>() {
+</div><div class="hljs-line">            <span class="hljs-comment">//=&gt;创建一个事件池，用来存储后期需要执行的方法</span>
+</div><div class="hljs-line">            <span class="hljs-keyword">this</span>.$pond = [];
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-comment">//=&gt;向事件池中追加方法（重复处理）</span>
+</div><div class="hljs-line">        add(func) {
+</div><div class="hljs-line">            <span class="hljs-keyword">let</span> flag = <span class="hljs-keyword">this</span>.$pond.some(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> {
+</div><div class="hljs-line">                <span class="hljs-keyword">return</span> item === func;
+</div><div class="hljs-line">            });
+</div><div class="hljs-line">            !flag ? <span class="hljs-keyword">this</span>.$pond.push(func) : <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-comment">//=&gt;从事件池中移除方法</span>
+</div><div class="hljs-line">        remove(func) {
+</div><div class="hljs-line">            <span class="hljs-keyword">let</span> $pond = <span class="hljs-keyword">this</span>.$pond;
+</div><div class="hljs-line">            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; $pond.length; i++) {
+</div><div class="hljs-line">                <span class="hljs-keyword">let</span> item = $pond[i];
+</div><div class="hljs-line">                <span class="hljs-keyword">if</span> (item === func) {
+</div><div class="hljs-line">                    <span class="hljs-comment">//=&gt;移除（顺序不变的情况下基本上只能用SPLICE了），但是不能这样写，这样会导致数组塌陷问题，我们移除不能真移除，只能把当前项赋值为null</span>
+</div><div class="hljs-line">                    <span class="hljs-comment">// $pond.splice(i, 1);</span>
+</div><div class="hljs-line">                    $pond[i] = <span class="hljs-literal">null</span>;
+</div><div class="hljs-line">                    <span class="hljs-keyword">break</span>;
+</div><div class="hljs-line">                }
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">        <span class="hljs-comment">//=&gt;通知事件池中的方法，按照顺序依次执行</span>
+</div><div class="hljs-line">        fire(...args) {
+</div><div class="hljs-line">            <span class="hljs-keyword">let</span> $pond = <span class="hljs-keyword">this</span>.$pond;
+</div><div class="hljs-line">            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; $pond.length; i++) {
+</div><div class="hljs-line">                <span class="hljs-keyword">let</span> item = $pond[i];
+</div><div class="hljs-line">                <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> item !== <span class="hljs-string">'function'</span>) {
+</div><div class="hljs-line">                    <span class="hljs-comment">//=&gt;此时再删除</span>
+</div><div class="hljs-line">                    $pond.splice(i, <span class="hljs-number">1</span>);
+</div><div class="hljs-line">                    i--;
+</div><div class="hljs-line">                    <span class="hljs-keyword">continue</span>;
+</div><div class="hljs-line">                }
+</div><div class="hljs-line">                item.call(<span class="hljs-keyword">this</span>, ...args);
+</div><div class="hljs-line">            }
+</div><div class="hljs-line">        }
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">    <span class="hljs-comment">//=&gt;暴露给外面用</span>
+</div><div class="hljs-line">    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">subscribe</span>(<span class="hljs-params"></span>) </span>{
+</div><div class="hljs-line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Sub();
+</div><div class="hljs-line">    }
+</div><div class="hljs-line">})();
+</div></code></pre>
+
+
+
+<h4 id="4jq源码解读">4.JQ源码解读</h4></div></body></html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+	<title>珠峰培训 - 微信：18310612838</title>
+	<!-- IMPORT CSS -->
+</head>
+
+<body>
+	<!-- IMPORT JS -->
+	<script src="js/axios.min.js"></script>
+	<script>
+		/* 当前页面请求地址：http://127.0.0.1:5500/1.html (live server插件) */
+		/* axios.get('http://127.0.0.1:1001/test').then(result => {
+			console.log(result);
+		}); */
+		//=>跨域请求错误：Access to XMLHttpRequest at 'http://127.0.0.1:1001/test' from origin 'http://127.0.0.1:5500' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.  为了保证请求的安全，ajax请求默认是不允许跨域的
+
+		/*
+		 * 跨域请求的处理方案
+		 *    很早有这样一种方案（开发环境下）：
+		 *      =>项目部署的时候肯定会在一起（项目一旦部署不存在跨域访问），但是在开发的时候，开发者需要让本地的项目也能访问到正常的数据接口
+		 *        1）最开始需要前端开发把后台代码也在本地部署起来，和本地的WEB部署在一起，在本地也产生同源的环境 =>BUG：需要前端随时同步后台的代码到本地，而且本地也要安装一些后太的环境
+		 *        2）本地无需拿后台代码等，本地启动一个WEB服务，通过修改本地的HOST文件，模拟出和数据服务器相同的环境  xampp / wampp   
+		 *    1. JSONP  
+		 *    2. 其它一些方案（IFRAME）
+		 *       + window.name  
+		 *       + window.location.hash
+		 *       + document.domain 处理主域相同，子域不同的相互请求
+		 *       + postMessage
+		 *    3. CORS 跨域资源共享
+		 *       原理：让服务器端允许客户端跨域AJAX请求（基本上靠服务端设置允许跨域，客户端无需做太多的修改，直接正常发送AJAX请求即可）
+		 *    4. webpack的崛起，带动了http proxy这种方案的兴起
+		 *       原理：利用webpack-dev-server插件，构建本地服务AA（预览本地开发的项目），我们发送AJAX请求，都先把请求发送给AA，有AA帮我们在发送给真正的服务器，AA起了一个中间代理的作用，从而解决跨域的问题！
+		 *       但是上述操作是基于AA这个服务的（webpack-dev-server），项目最后部署的时候，没有webpack-dev-server插件，此时我们需要基于其它方案（例如：nginx反向代理）实现出当初AA服务代理的作用才可以！
+		 * 		 + nginx反向代理
+		 *    5. web scoket
+		 */
+
+		/* api.xxx.com/user/list
+		api.xxx.com/index.html     =>  http://127.0.0.1:5500/index.html
+		[HOST]
+		api.xxx.com  http://127.0.0.1:5500/ */
+	</script>
+
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+	<script>
+		/*
+		 * JSONP：利用了SCRIPT（IMG/IFRAME）等标签不存在跨域请求限制的特点，实现跨域请求的 
+		 *   只能是GET请求（不能处理POST请求）
+		 *   =>传递给服务器的信息都是基于问号传参的方式传递过去的
+		 *   =>为了能够拿到服务器返回的结果，需要利用回调函数的机制，把客户端的某个函数(全局)名传递给服务器，由服务器接收到函数后进行特出的处理  ?callback=func  （callback这个名字是和服务器商定好的，一般都叫callback这个名字）
+		 */
+		/* function func(result) {
+			console.log(result);
+		}
+
+		let script = document.createElement('script');
+		script.src = `http://127.0.0.1:1001/test?lx=1&name=zhufeng&callback=func&_=${new Date().getTime()}`;
+		document.body.appendChild(script);
+		// 请求结束，客户点拿到一个这样的结果：func({....})，浏览器会把函数执行（之所以这个函数在传递的时候需要是全局函数，因为后期获取到结果的时候，需要把它执行，只有全局函数才能在任何地方获取到） */
+	</script>
+
+	<script src="js/axios.defaults.js"></script>
+	<script>
+		(async _ => {
+			let result = await axios.get('/test');
+			console.log(result);
+		})();
+	</script>
+</body>
+
+</html>

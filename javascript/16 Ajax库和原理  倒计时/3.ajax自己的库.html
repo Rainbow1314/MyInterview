@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+	<title>珠峰培训 - 微信：18310612838</title>
+	<!-- IMPORT CSS -->
+</head>
+
+<body>
+	<!-- IMPORT JS -->
+	<script src="js/_ajax.js"></script>
+	<script>
+		_ajax.defaults.baseURL = './';
+		_ajax.defaults.headers = {
+			'Content-Type': 'application/x-www-form-urlencode'
+		};
+		_ajax.defaults.transformResponse = function (result) {
+			return result.data;
+		};
+
+		_ajax.get('data.json', {
+			cache: false,
+			params: {
+				key: '00d91e8e0cca2b76f515926a36db68f5',
+				phone: '13594347817',
+				passwd: '123654'
+			},
+			headers: {
+				xxx: 'xxx'
+			}
+		}).then(result => {
+			console.log(result);
+		});
+	</script>
+</body>
+
+</html>

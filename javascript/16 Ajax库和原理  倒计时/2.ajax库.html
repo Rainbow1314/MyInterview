@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+	<title>珠峰培训 - 微信：18310612838</title>
+	<!-- IMPORT CSS -->
+</head>
+
+<body>
+	<!-- IMPORT JS -->
+	<!-- <script src="js/jquery.min.js"></script> -->
+	<script>
+		/* 
+		 * 常用的AJAX库（调用起来更方便、操作起来更简单）：
+		 *    + 以JQ/ZEPTO为主的AJAX库（把AJAX四步操作进行封装、提供了JSONP跨域处理、对于一些常用操作[例如：GET/POST/表单序列化/参数处理等]进行封装处理）
+		 *    + 以AXIOS为主的AJAX库（不仅对AJAX进行封装，而且是基于PROMISE进行管理） [最常用的]
+		 *    + ES6中新增的内置类Fetch来完成HTTP数据请求（记住：FETCH不是AJAX，他是新的通讯方案；而且默认基于PROMISE进行管理） [很多公司已经开始尝试使用]
+		 *    + 跨域请求方案...
+		 * https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API
+		 */
+		/* 
+		=>课后扩展：自己回去探索JQ中AJAX库的应用和配置以及源码解析 
+		$.ajax({
+			url: './data.json',
+			method: 'GET',
+			data: {
+				// 如果是GET请求，则问号传参，POST请求则基于请求主体传参
+				lx: 1
+			},
+			success: function (result) {
+				// 请求成功，从服务器获取的结果 RESULT
+			}
+		}); 
+		*/
+	</script>
+
+	<script src="js/axios.min.js"></script>
+	<script>
+		/* 
+		 * AXIOS：基于PROMISE进行管理的AJAX库
+		 * 	 http://www.axios-js.com/zh-cn/docs/ 
+		 */
+		// axios.request({
+		// 	// 请求的地址  baseURL：统一基本地址，一般是设置地址的前缀
+		// 	url: './data.json',
+		// 	// 请求的方式
+		// 	method: 'GET',
+		// 	// 设置请求头信息
+		// 	headers: {
+		// 		'Content-Type': 'application/x-www-form-urlencoded'
+		// 	},
+		// 	// GET请求下，问号传参的信息
+		// 	params: {},
+		// 	// POST请求下，请求主体传参的信息
+		// 	data: {},
+		// }).then(result => {
+		// 	// 从服务器获取的结果
+		// 	/* 
+		// 	 * config:你自己的配置信息
+		// 	 * headers:响应头信息
+		// 	 * request:原生的XHR AJAX对象
+		// 	 * status:网络状态码  
+		// 	 * statusText
+		// 	 * data:存储的是响应主体信息
+		// 	 */
+		// 	console.log(result);
+		// });
+
+		/* 快捷请求的方法 axios.get/delete/head/post/put... 或者 axios.all*/
+		// .get([URL],[OPTIONS])
+		axios.get('./data.json', {
+			params: {
+				lx: 0
+			},
+			/* transformResponse: [function (data) {
+				// 把从服务器获取的请求主体信息进行处理，处理完在执行THEN操作
+			}] */
+		});
+		// .get([URL],[DATA],[OPTIONS])  [DATA]是基于请求主体传递的内容
+		// axios基于请求主体传递给服务器的默认是JSON格式，如果想变为x-www-form-urlencoded格式还需要自己处理
+		/* axios.post('./data.json', {
+			lx: 0,
+			name: 'zhufeng'
+		}, {
+			// 针对于POST系列请求，把传递给服务器请求主体内容进行处理（函数中返回的结果就是最后基于请求主体传递给服务器的内容）
+			transformRequest: [function (data) {
+				// xxx=xxx&xxx=xxx
+				let str = ``;
+				for (let key in data) {
+					if (!data.hasOwnProperty(key)) break;
+					str += `&${key}=${data[key]}`;
+				}
+				str = str.substring(1);
+				return str;
+			}],
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
+		}); */
+
+		// let request1 = axios.get('./data.json');
+		// let request2 = axios.get('./data.json');
+		// let request3 = axios.get('./data.json');
+		
+		// /* axios.all([request1, request2, request3]).then(resuls => {
+		// 	// 所有请求都成功后才会执行  => Promise.all
+		// 	// resuls数组中存储了三个请求的结果
+		// 	console.log(resuls);
+		// 	let [val1,val2,val3] = results;
+		// }); */
+
+		// axios.all([request1, request2, request3]).then(
+		// 	axios.spread((val1, val2, val3) => {
+		// 		// 把ALL返回的多个结果进行处理
+		// 		console.log(val1, val2, val3);
+		// 	})
+		// );
+	</script>
+</body>
+
+</html>
